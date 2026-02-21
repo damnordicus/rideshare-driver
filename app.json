@@ -9,6 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "android": {
+      "googleServicesFile": "./google-services.json",
       "package": "com.ridesharedriver.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
@@ -49,7 +50,13 @@
           "color": "#1a56db",
           "sounds": []
         }
-      ]
+      ],
+      ["expo-build-properties",
+      {
+        "android": {
+          "usesCleartextTraffic": true
+        }
+      }]
     ],
     "experiments": {
       "typedRoutes": true

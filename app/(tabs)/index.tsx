@@ -11,9 +11,10 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { getItem, setItem } from '@/utils/storage';
 
-const API_BASE = 'https://basebound.travisspark.com';
+const API_BASE = 'http://192.168.50.75:3000';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -23,7 +24,6 @@ export default function LoginScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    // If a session cookie is already stored, go straight to dashboard
     getItem('session-cookie').then((cookie) => {
       if (cookie) {
         router.replace('/dashboard');
@@ -54,10 +54,8 @@ export default function LoginScreen() {
         return;
       }
 
-      // The server returns the Set-Cookie header value in the body so we can
-      // store it without relying on native Set-Cookie header parsing.
       const rawCookie: string = data.cookie ?? '';
-      const cookieValue = rawCookie.split(';')[0]; // "session-cookie=<value>"
+      const cookieValue = rawCookie.split(';')[0];
 
       if (!cookieValue.startsWith('session-cookie=')) {
         Alert.alert('Error', 'Unexpected session format. Please try again.');
@@ -76,7 +74,7 @@ export default function LoginScreen() {
   if (checking) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#1a56db" />
+        <ActivityIndicator size="large" color="#2563EB" />
       </View>
     );
   }
@@ -87,44 +85,59 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.inner}>
-        <Text style={styles.title}>Rideshare Driver</Text>
-        <Text style={styles.subtitle}>Sign in to receive ride notifications</Text>
+        {/* Logo */}
+        <View style={styles.logoSection}>
+          <View style={styles.logoSquare}>
+            <Ionicons name="car-sport" size={34} color="#fff"/>
+          </View>
+          <Text style={styles.title}>BaseBound Driver</Text>
+          <Text style={styles.subtitle}>Sign in to receive ride notifications</Text>
+        </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#9ca3af"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          autoComplete="email"
-          returnKeyType="next"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#9ca3af"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          autoComplete="current-password"
-          returnKeyType="done"
-          onSubmitEditing={handleLogin}
-        />
+        {/* Form */}
+        <View style={styles.card}>
+          <Text style={styles.label}>
+            Email Address
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#9CA3AF"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            autoComplete="email"
+            returnKeyType="next"
+          />
+          <Text style={styles.label}>
+            Password
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#9CA3AF"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            autoComplete="current-password"
+            returnKeyType="done"
+            onSubmitEditing={handleLogin}
+          />
 
-        <TouchableOpacity
-          style={[styles.button, submitting && styles.buttonDisabled]}
-          onPress={handleLogin}
-          disabled={submitting}
-          activeOpacity={0.8}
-        >
-          {submitting ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Sign In</Text>
-          )}
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, submitting && styles.buttonDisabled]}
+            onPress={handleLogin}
+            disabled={submitting}
+            activeOpacity={0.85}
+          >
+            {submitting ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Sign In</Text>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -135,47 +148,86 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#EEF2FF',
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#EEF2FF',
   },
   inner: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 28,
+    paddingHorizontal: 24,
+  },
+  logoSection: {
+    alignItems: 'center',
+    marginBottom: 28,
+  },
+  logoSquare: {
+    width: 72,
+    height: 72,
+    borderRadius: 10,
+    backgroundColor: '#2563EB',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 18,
+    shadowColor: '#2563EB',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    elevation: 8,
   },
   title: {
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: '700',
-    textAlign: 'center',
     color: '#111827',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   subtitle: {
     fontSize: 15,
-    color: '#6b7280',
+    color: '#6B7280',
     textAlign: 'center',
-    marginBottom: 36,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#111827',
+    marginBottom: 10,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 13,
+    borderColor: '#E5E7EB',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     fontSize: 16,
     color: '#111827',
     marginBottom: 12,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#F9FAFB',
   },
   button: {
-    backgroundColor: '#1a56db',
-    borderRadius: 10,
+    backgroundColor: '#2563EB',
+    borderRadius: 12,
     paddingVertical: 15,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 4,
+    shadowColor: '#2563EB',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   buttonDisabled: {
     opacity: 0.6,

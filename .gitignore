@@ -30,6 +30,9 @@ yarn-error.*
 .DS_Store
 *.pem
 
+google-services.json
+rideshare-driver-2341f-a99dda236184.json
+
 # local env files
 .env*.local
 
